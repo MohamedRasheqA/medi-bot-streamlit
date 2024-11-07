@@ -6,21 +6,14 @@ from typing import Dict, Any, Optional, Generator, List
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Access the environment variables
-pplx_api_key = os.getenv("api_key")
-pplx_model = os.getenv("model")
-
 class GLP1Bot:
     def __init__(self):
         """Initialize the GLP1Bot with PPLX client and system prompts"""
-        self.pplx_api_key = os.getenv("PPLX_API_KEY")
+        self.pplx_api_key = st.secrets["PPLX_API_KEY"]
         if not self.pplx_api_key:
-            raise ValueError("PPLX API key not found in environment variables")
+            raise ValueError("PPLX API key not found in secrets")
             
-        self.pplx_model = os.getenv("PPLX_MODEL", "llama-3.1-sonar-large-128k-online")
+        self.pplx_model = st.secrets.get("PPLX_MODEL", "llama-3.1-sonar-large-128k-online")
         
         self.pplx_headers = {
             "Authorization": f"Bearer {self.pplx_api_key}",
@@ -399,8 +392,8 @@ def main():
         
         set_page_style()
         
-        if not os.getenv("PPLX_API_KEY"):
-            st.error('Required PPLX API key not found. Please configure the PPLX API key in your .env file.')
+        if "PPLX_API_KEY" not in st.secrets:
+            st.error('Required PPLX API key not found. Please configure the PPLX API key in your Streamlit secrets.')
             st.stop()
         
         st.title("💊 GLP-1 Medication Information Assistant")
